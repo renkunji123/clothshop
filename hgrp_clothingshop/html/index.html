@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/shop.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body style="background: transparent">
+    <div id="app" class="shop-app hidden">
+      <div class="shop-app__left">
+        <div class="shop-app__header">
+          <div class="shop-app__headerMain">
+            <div class="shop-app__title" id="title">Cửa hàng</div>
+            <div class="shop-app__gender" id="genderBadge">Đồ nam</div>
+          </div>
+          <button class="shop-app__close" id="btnClose">ESC</button>
+        </div>
+
+        <div class="shop-app__tabs" id="tabs"></div>
+
+        <div class="shop-app__search">
+          <input id="search" class="shop-app__searchInput" placeholder="Tìm..." />
+        </div>
+
+        <div class="shop-app__list" id="list"></div>
+      </div>
+
+      <div class="shop-app__rightStack">
+        <div class="shop-app__cartCard">
+          <div class="shop-cart__header">
+            <div class="shop-cart__title">Giỏ hàng</div>
+            <div class="shop-cart__count" id="cartCount">0 món</div>
+          </div>
+          <div class="shop-cart__list" id="cartList"></div>
+          <div class="shop-cart__empty" id="cartEmpty">Chọn đồ để thêm vào giỏ</div>
+          <div class="shop-cart__footer">
+            <div class="shop-cart__totalRow">
+              <span>Tổng</span>
+              <span class="shop-cart__total" id="cartTotal">0$</span>
+            </div>
+            <button class="shop-btn shop-btn--primary shop-cart__checkout" id="btnCheckout" disabled>Thanh toán</button>
+          </div>
+        </div>
+
+        <div class="shop-app__detailCard">
+          <div class="shop-detail__thumb" id="detailThumb">
+            <img id="detailImg" class="shop-detail__img" alt="" hidden />
+            <div class="shop-detail__imgFallback" id="detailImgFallback">👕</div>
+          </div>
+          <div class="shop-detail__title" id="detailTitle">—</div>
+          <div class="shop-detail__meta">
+            <span class="shop-detail__badge" id="detailBadge">—</span>
+            <span class="shop-detail__price" id="detailPrice">0$</span>
+          </div>
+          <div class="shop-detail__hint">Bấm món trong danh sách để xem &amp; thêm giỏ</div>
+          <div class="shop-detail__rotate">
+            <button class="shop-icoBtn" id="btnRotL" title="Quay trái">⟲</button>
+            <button class="shop-icoBtn" id="btnRotR" title="Quay phải">⟳</button>
+          </div>
+          <div class="shop-detail__actions">
+            <button class="shop-btn shop-btn--secondary" id="btnCancel">Huỷ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminApp" class="admin-app hidden">
+      <div class="admin-shell">
+        <header class="admin-top">
+          <div>
+            <p class="admin-eyebrow">VRP · CLOTHING ADMIN</p>
+            <h1 id="adminPageTitle">Shop quần áo</h1>
+          </div>
+          <button type="button" class="admin-btn" id="adminBtnClose">Đóng</button>
+        </header>
+
+        <div class="admin-layout">
+          <aside class="admin-sidebar">
+            <div class="admin-tabs" id="adminMainTabs">
+              <button type="button" class="admin-tab is-active" data-panel="listings">Danh sách bán</button>
+              <button type="button" class="admin-tab" data-panel="settings">Cài đặt shop</button>
+            </div>
+            <div id="adminListingNav" class="hidden">
+              <p class="admin-hint admin-shop-active" id="adminActiveShopLabel"></p>
+              <button type="button" class="admin-btn" id="adminBtnChangeShop" style="width:100%;margin-bottom:10px">← Đổi shop</button>
+              <h3>Giới tính</h3>
+              <div class="admin-tabs" id="adminGenderTabs"></div>
+              <h3>Danh mục</h3>
+              <div class="admin-subtabs" id="adminCategoryTabs"></div>
+            </div>
+            <p class="admin-status" id="adminStatus"></p>
+          </aside>
+
+          <main class="admin-main">
+            <section id="adminPanelPickShop" class="admin-panel">
+              <p class="admin-hint" style="margin-top:0">Chọn shop trước — mỗi cửa có danh sách bán riêng trên map.</p>
+              <div id="adminShopPickGrid" class="admin-shop-pick-grid"></div>
+            </section>
+
+            <section id="adminPanelListings" class="admin-panel hidden">
+              <div class="admin-toolbar">
+                <input id="adminSearch" class="admin-search" placeholder="Tìm tên / drawable / item key..." />
+                <button type="button" class="admin-btn admin-btn--primary" id="adminBtnAdd">+ Thêm món vào shop</button>
+                <button type="button" class="admin-btn" id="adminBtnRefresh">Tải lại</button>
+              </div>
+              <div class="admin-grid" id="adminGrid"></div>
+            </section>
+
+            <section id="adminPanelSettings" class="admin-panel hidden">
+              <p class="admin-hint" style="margin-top:0;color:var(--adm-muted);font-size:13px">
+                Chọn loại tiền cho từng shop (theo cả shop). Bình dân / Boutique có thể dùng Cash hoặc V Medal.
+              </p>
+              <div id="adminShopSettings" class="admin-shop-settings admin-shop-settings--cards"></div>
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div id="adminPicker" class="admin-picker hidden">
+      <div class="admin-picker__card">
+        <div class="admin-top">
+          <div>
+            <h2 style="margin:0">Thêm vào shop</h2>
+            <p id="adminPickerShopHint" style="margin:6px 0 0;color:var(--adm-muted);font-size:12px">Chọn món catalog — chỉ thêm vào shop đang chọn</p>
+          </div>
+          <button type="button" class="admin-btn" id="adminPickerClose">Đóng</button>
+        </div>
+        <div class="admin-picker__nav">
+          <div>
+            <h3 style="margin:0 0 6px;font-size:11px;color:var(--adm-muted)">Giới tính</h3>
+            <div class="admin-tabs" id="adminPickerGenderTabs"></div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 6px;font-size:11px;color:var(--adm-muted)">Danh mục</h3>
+            <div class="admin-subtabs" id="adminPickerCategoryTabs"></div>
+          </div>
+        </div>
+        <input id="adminPickerSearch" class="admin-search" placeholder="Tìm drawable / tên..." />
+        <div class="admin-picker__grid" id="adminPickerGrid"></div>
+        <div class="admin-form">
+          <label>Giá bán ($)<input id="adminPickerPrice" type="number" min="0" value="100" /></label>
+        </div>
+        <footer class="admin-picker__foot">
+          <span id="adminPickerCount" style="color:var(--adm-muted);font-size:12px">0 món</span>
+          <button type="button" class="admin-btn admin-btn--primary" id="adminPickerAdd" disabled>Thêm vào shop</button>
+        </footer>
+      </div>
+    </div>
+
+    <div id="configApp" class="studio-app hidden">
+      <aside class="studio-panel studio-panel--left">
+        <div class="studio-panel__head">
+          <p class="admin-eyebrow">VRP · STUDIO</p>
+          <h1>Clothing Studio</h1>
+          <p style="margin:6px 0 0;color:var(--adm-muted);font-size:11px">Catalog DB · preview ped · extra component</p>
+        </div>
+        <div class="studio-panel__body">
+          <h3 style="margin:0;font-size:12px;color:var(--adm-muted)">Giới tính</h3>
+          <div class="admin-tabs" id="studioGenderTabs"></div>
+          <h3 style="margin:0;font-size:12px;color:var(--adm-muted)">Danh mục</h3>
+          <div class="admin-subtabs" id="studioCategoryTabs"></div>
+          <div class="studio-filters" id="studioStatusFilters"></div>
+          <input id="studioSearch" class="admin-search" placeholder="Tìm profile..." />
+          <div class="studio-list" id="studioList"></div>
+          <p class="admin-status" id="studioStatus"></p>
+        </div>
+        <div class="studio-panel__foot">
+          <button type="button" class="admin-btn admin-btn--primary" id="studioBtnAdd" style="width:100%">+ Profile mới</button>
+          <button type="button" class="admin-btn" id="studioBtnClose" style="width:100%;margin-top:8px">Đóng</button>
+        </div>
+      </aside>
+
+      <div class="studio-center">
+        <div class="studio-center__controls">
+          <div class="studio-rotate">
+            <button type="button" class="studio-icoBtn" id="studioRotL" title="Quay trái">⟲</button>
+            <button type="button" class="studio-icoBtn" id="studioRotR" title="Quay phải">⟳</button>
+          </div>
+          <div class="studio-cam-presets" id="studioCamPresets"></div>
+        </div>
+      </div>
+
+      <aside class="studio-panel studio-panel--right">
+        <div class="studio-panel__head">
+          <p class="admin-eyebrow">CHỈNH PROFILE</p>
+          <h1 id="studioFormTitle">Chọn profile</h1>
+        </div>
+        <div class="studio-panel__body" id="studioFormWrap">
+          <div class="studio-empty" id="studioFormEmpty">Chọn profile bên trái hoặc tạo mới để chỉnh tên, slot mặc và extra component.</div>
+          <form class="studio-form hidden" id="studioForm">
+            <label>Tên hiển thị<input id="studioLabel" type="text" maxlength="128" /></label>
+            <label>Độ hiếm<select id="studioRarity"></select></label>
+            <label>Image key<input id="studioImageKey" type="text" readonly /></label>
+            <label>Slot inventory (display type)<select id="studioDisplayType"></select></label>
+            <label>Tag đồ (shop)<select id="studioItemTag"></select></label>
+            <label>Trạng thái<select id="studioEnabled"><option value="1">Bật</option><option value="0">Tắt</option></select></label>
+            <div id="studioMaskFeatures" class="admin-mask-features hidden">
+              <label class="admin-check"><input id="studioHideNametag" type="checkbox" /> Ẩn danh</label>
+              <label class="admin-check"><input id="studioHideHair" type="checkbox" /> Không tóc</label>
+            </div>
+            <div class="studio-section" id="studioCompSection">
+              <div class="studio-section__head">
+                <h4>Components (Illenium)</h4>
+                <button type="button" class="admin-btn" id="studioBtnIllenium">Mở Illenium</button>
+              </div>
+              <p class="studio-hint">Giống menu thay đồ Illenium — tick slot rồi bấm ◀ ▶. Comp <strong>mặc chính</strong> luôn bật (theo prefix ảnh).</p>
+              <div id="studioCompRows"></div>
+            </div>
+            <div class="studio-actions">
+              <button type="submit" class="admin-btn admin-btn--primary">Lưu DB</button>
+              <button type="button" class="admin-btn" id="studioBtnRefresh">Tải lại</button>
+              <button type="button" class="admin-btn admin-btn--danger" id="studioBtnDelete">Xóa</button>
+            </div>
+          </form>
+        </div>
+      </aside>
+    </div>
+
+    <div id="configPicker" class="admin-picker hidden">
+      <div class="admin-picker__card">
+        <div class="admin-top">
+          <div>
+            <h2 style="margin:0">Thêm profile mới</h2>
+            <p style="margin:6px 0 0;color:var(--adm-muted);font-size:12px">Chọn drawable chưa có trong catalog</p>
+          </div>
+          <button type="button" class="admin-btn" id="configPickerClose">Đóng</button>
+        </div>
+        <input id="configPickerSearch" class="admin-search" placeholder="Tìm drawable / tên..." />
+        <div class="admin-picker__grid" id="configPickerGrid"></div>
+        <div class="admin-form">
+          <label>Tên hiển thị<input id="configPickerLabel" type="text" maxlength="128" /></label>
+          <label>Độ hiếm<select id="configPickerRarity"></select></label>
+          <div id="configPickerMaskFeatures" class="admin-mask-features hidden">
+            <label class="admin-check"><input id="configPickerHideNametag" type="checkbox" /> Ẩn danh (ẩn name tag với người khác)</label>
+            <label class="admin-check"><input id="configPickerHideHair" type="checkbox" /> Không tóc (ẩn tóc khi đeo)</label>
+          </div>
+        </div>
+        <footer class="admin-picker__foot">
+          <span id="configPickerCount" style="color:var(--adm-muted);font-size:12px">0 món</span>
+          <button type="button" class="admin-btn admin-btn--primary" id="configPickerSave" disabled>Chọn</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="js/shop.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/studio.js"></script>
+  </body>
+</html>
